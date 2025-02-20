@@ -33,14 +33,14 @@ After entering the above command, connect to the localhost server (127.0.0.1) pr
 # A Keyword-based Approach to Analyzing Scientific Research Trends: ReRAM Present and Future 
 The ReRAM_DB.tar file contains bibliographic information and structured research data related to the ReRAM research field, as utilized in our study, "A Keyword-based Approach to Analyzing Scientific Research Trends: ReRAM Present and Future." This dataset includes example data applicable to this code.
 
-##Dataset Details
-ReRAM_DB/KARS/metadata_source.csv: The original metadata used in the paper.
-ReRAM_DB/KARS/network_article.gephi: The original keyword network constructed in the study.
-ReRAM_DB/database: The original metadata converted into a format compatible with the provided code.
+## Dataset Details
+ReRAM_DB/KARS/metadata_source.csv: The original metadata used in the paper.\n
+ReRAM_DB/KARS/network_article.gephi: The original keyword network constructed in the study.\n
+ReRAM_DB/database: The original metadata converted into a format compatible with the provided code.\n\n
 Please note that the results of the PageRank algorithm and Modularity algorithm used in Gephi (as applied in the paper) may differ from the results obtained using the same algorithms in the provided code.
 
-##Steps to Test the Example Data
-Extract the contents of the ReRAM_DB.tar file.
+## Steps to Test the Example Data
+Extract the contents of the ReRAM_DB.tar file.\n
 Run KARS_GUI.py, then enter the extracted ReRAM_DB directory path in the "load_DB" section.
 
 
