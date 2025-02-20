@@ -25,7 +25,7 @@ A program that automates the extraction of keywords from scientific research bas
     python -m spacy download en_core_web_sm
     python -m spacy download en_core_web_trf
 
-# 5. Usage
+## 5. Usage
     python KARS_GUI.py
 
 After entering the above command, connect to the localhost server (127.0.0.1) printed on the terminal, and then sequentially execute load_DB -> keyword_extraction -> network_construction -> research_trend_analysis.
