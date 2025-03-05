@@ -43,6 +43,7 @@ Please note that the results of the PageRank algorithm and Modularity algorithm 
 ## Steps to Test the Example Data
 1. Extract the contents of the ReRAM_DB.tar file.  
 2. Run KARS_GUI.py, then enter the extracted ReRAM_DB directory path in the "load_DB" section.
+3. Excute keyword_extration, network_construction, and research_trend_analysis, sequentially.
 
 
 # Results
