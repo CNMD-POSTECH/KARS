@@ -62,6 +62,9 @@ A graph depicting the evolution of keyword distribution over the years for each 
 A graph illustrating the proportionate changes in top keywords over time based on the maturity level of each research community. This graph evaluates the frequency variations of top keywords over time within each community, as identified through research structuring.
 <p align="center"><img src="./examples/keyword_evolution.png">
 
+# Citations
+Kim, H., Kim, S.H., Kim, J. et al. A keyword-based approach to analyzing scientific research trends: ReRAM present and future. Sci Rep 15, 12011 (2025). https://doi.org/10.1038/s41598-025-93423-5
+
 # Contributor
 ```
 Conceptualization: Hyeon Kim, Donghwa Lee
