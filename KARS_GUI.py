@@ -35,7 +35,8 @@ class KARS_GUI:
         self.keyword_extraction_interface = gr.Interface(
             self.keyword_extraction,
             [
-                gr.Radio(["efficiency", "accuracy"], label="UPOS_model", value="efficient", description="The model for UPOS tagging (efficiency: en_core_web_sm, accuracy: en_core_web_trf)"),
+                gr.Radio(["efficiency", "accuracy"], label="UPOS_model", value="efficiency", description="The model for UPOS tagging (efficiency: en_core_web_sm, accuracy: en_core_web_trf)"),
+                gr.Radio(["title", "abstract"], label="text_type", value="title", description="The text type for analyzing research trend")
             ],
             [
                 # print run-time status
@@ -60,6 +61,8 @@ class KARS_GUI:
             [
                 gr.Number(label="keyword limit", value=80, step=1, min_value=1, max_value=100, description="The % of keywords to be selected"),
                 gr.Number(label="weight limit", value=2, step=1, min_value=1, max_value=100, description="The weight % criteria for communities"),
+                gr.Number(label="min year", value=None, step=1, max_value=2100, description="The minimum year of research trend analysis (If None, the minimum year of DB is used)"),
+                gr.Number(label="max year", value=None, step=1, description="The maximum year of research trend analysis (If None, the maximum year of DB is used)"),
                 gr.Radio(["development", "introduction", "growth", "maturity", "decline"], label="start PLC", value="introduction", description="The start PLC of research trend analysis"),
                 gr.Radio(["development", "introduction", "growth", "maturity", "decline"], label="end PLC", value="maturity", description="The end PLC of research trend analysis"),
                 gr.Number(label="top rank", value=20, step=1, min_value=1, max_value=100, description="The top rank of keyword evolution"),
@@ -103,7 +106,7 @@ class KARS_GUI:
             Folder_list = [[DB] for DB in os.listdir(self.DB_path)]
             return Folder_list, "DB is loaded"
 
-    def keyword_extraction(self, UPOS_model, progress=gr.Progress()):
+    def keyword_extraction(self, UPOS_model, text_type, progress=gr.Progress()):
        # progress
         progress(0, desc="Please wait for a while...")
 
@@ -117,7 +120,7 @@ class KARS_GUI:
         sys.stdout = Logger(log_filename)
 
         # keyword_extraction
-        self.KARS_class.keyword_extraction(UPOS_model)
+        self.KARS_class.keyword_extraction(UPOS_model, text_type)
 
         # 원래의 sys.stdout으로 돌아갑니다.
         sys.stdout = original_stdout
@@ -153,8 +156,7 @@ class KARS_GUI:
 
         return log
 
-    def research_trend_analysis(self, keyword_limit, weight_limit, start_PLC, end_PLC, top_rank, progress=gr.Progress()):
-        min_year=None
+    def research_trend_analysis(self, keyword_limit, weight_limit, min_year, max_year, start_PLC, end_PLC, top_rank, progress=gr.Progress()):
         keyword_limit = int(keyword_limit)
         weight_limit = int(weight_limit)
         top_rank = int(top_rank)
@@ -172,7 +174,7 @@ class KARS_GUI:
         sys.stdout = Logger(log_filename)
 
         # collect metadata
-        research_maturity_plot, community_year_trend_plot, keyword_evolution_plot = self.KARS_class.research_trend_analysis(keyword_limit, weight_limit, min_year, start_PLC, end_PLC, top_rank)
+        research_maturity_plot, community_year_trend_plot, keyword_evolution_plot = self.KARS_class.research_trend_analysis(keyword_limit, weight_limit, min_year, max_year, start_PLC, end_PLC, top_rank)
 
         # 원래의 sys.stdout으로 돌아갑니다.
         sys.stdout = original_stdout

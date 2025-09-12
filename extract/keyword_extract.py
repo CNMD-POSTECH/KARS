@@ -6,9 +6,10 @@ from spacy.tokenizer import Tokenizer
 from tqdm import tqdm
 
 class keyword_extraction:
-    def __init__(self, DB_path, UPOS_model="efficiency"):
+    def __init__(self, DB_path, UPOS_model="efficiency", text_type="title"):
         self.DB_path = f"{DB_path}/database"
         self.UPOS_model = UPOS_model
+        self.text_type = text_type
         if self.UPOS_model == "efficiency":
             self.spacy_model = spacy.load("en_core_web_sm")
         elif self.UPOS_model == "accuracy":
@@ -27,8 +28,14 @@ class keyword_extraction:
             KBSE_dict = json.load(open(f"{self.DB_path}/{paper_index}/KBSE.json", "r", encoding="utf-8-sig"))
 
             # 1-3. KBSE.json 에 title, published_date 가 없다면 continue
-            if not "title" in KBSE_dict["cover_data"].keys() or KBSE_dict["cover_data"]["title"]["0"] == None:
-                continue
+            if self.text_type == "title":
+                if not "title" in KBSE_dict["cover_data"].keys() or KBSE_dict["cover_data"]["title"]["0"] == None:
+                    continue
+            elif self.text_type == "abstract":
+                if not "abstract" in KBSE_dict["cover_data"].keys() or KBSE_dict["cover_data"]["abstract"] == None:
+                    continue
+            else:
+                raise ValueError("text_type must be 'title' or 'abstract'")
             if not "published_date" in KBSE_dict["cover_data"].keys() or KBSE_dict["cover_data"]["published_date"] == None:
                 continue
             
@@ -36,20 +43,23 @@ class keyword_extraction:
             KARS_dict = {"cover_data": KBSE_dict["cover_data"], "keyword_tokenization":{}}
 
             # 1-4. title 내 keyword 탐색 및 추출
-            title = KARS_dict["cover_data"]["title"]["0"]
-            title = title.split()
+            if self.text_type == "title":
+                text = KARS_dict["cover_data"]["title"]["0"]
+            elif self.text_type == "abstract":
+                text = KARS_dict["cover_data"]["abstract"]["0"]
+            text = text.split()
 
             # 1-4-1. 약어를 제외한 나머지 단어를 소문자로 변환
             abb_list = []
-            for word in title:
+            for word in text:
                 if len(word) == 1 and word.isupper():
                     abb_list.append(word)
                 elif len(word) > 1 and len([char for char in word if char.isupper()]) >= 2:
                     abb_list.append(word)
-            title = ' '.join([word.lower() if not word in abb_list else word for word in title])
+            text = ' '.join([word.lower() if not word in abb_list else word for word in text])
 
             # 1-4-2. spacy tokenizer 수행
-            doc = self.spacy_model(title)
+            doc = self.spacy_model(text)
 
             # 1-4-3. doc token list 를 sentence_token_list 에 저장
             keyword_list = [token for token in doc]
@@ -68,7 +78,10 @@ class keyword_extraction:
 
             # 1-5. "[sep]" 을 제거해 저장
             NER_list = [token for token in keyword_list if not token == "[sep]"]
-            
+
+            # 1-6. NER_list 에서 중복 제거
+            NER_list = list(set(NER_list))
+
             # 1-6. token list 를 KBSE_dict 에 저장
             KARS_dict["keyword_tokenization"]["title"] = NER_list
 

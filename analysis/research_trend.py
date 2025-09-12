@@ -12,21 +12,61 @@ import numpy as np
 
 
 class research_trend:
-    def __init__(self, DB_path):
+    def __init__(self, DB_path, min_year, max_year):
         self.DB_name = DB_path.split("/")[-1]
         self.DB_path = DB_path + "/KARS"
         self.G = nx.read_gexf(os.path.join(self.DB_path, "KARS.gexf"))
-        pass
+        # extract year weight from self.G
+        self.year_weight = {}
+        for node in self.G.nodes:
+            for year in self.G.nodes[node].keys():
+                try:
+                    int(year)
+                except:
+                    continue
+
+                if not year in self.year_weight:
+                    self.year_weight[str(year)] = 0
+                self.year_weight[str(year)] += int(self.G.nodes[node][str(year)])
+
+        # sort year_weight by year
+        self.year_weight = dict(sorted(self.year_weight.items(), key=lambda item: item[0]))
+
+        # remove year over now year
+        if min_year:
+            self.min_year = int(min_year)
+        else:
+            self.min_year = int(min(list(self.year_weight.keys())))
+        if max_year:
+            self.max_year = int(max_year)
+        else:
+            self.max_year = int(max(list(self.year_weight.keys()))) 
+        self.year_weight = {year: weight for year, weight in self.year_weight.items() if int(year) >= self.min_year and int(year) <= self.max_year}
+        print(f"Research trend analysis from {self.min_year} to {self.max_year}")
 
     def keyword_selection(self, keyword_limit):
         print("Keyword selection started")
-        # 1. calculate pagerank
+        # 1. keyword selection by min_year and max_year
+        for node in self.G.nodes:
+            for year in self.G.nodes[node].copy():
+                try:
+                    int(year)
+                except:
+                    continue
+
+                if int(year) < self.min_year or int(year) > self.max_year:
+                    del self.G.nodes[node][year]
+            # if node has no year, delete node
+            if len(self.G.nodes[node]) == 1:
+                self.G.remove_node(node)
+
+        # 2. calculate pagerank
         node_pagerank = nx.pagerank(self.G, alpha=0.85, max_iter=20, tol=1e-06, weight="weight", dangling=None)
         for key, value in self.G.nodes.data():
             self.G.nodes[key]['pagerank'] = node_pagerank[key]
         
-        # 2. select keyword by keyword limit
-        # 2.1. sort nodes in self.G by pagerank
+        # 3. select keyword by keyword limit
+        # 3.1. sort nodes in self.G by pagerank
         keyword_list = sorted(self.G.nodes.data(), key=lambda x: x[1]['pagerank'], reverse=True)
         weight_total = sum([self.G.nodes[key]['weight'] for key, value in self.G.nodes.data()])
         weight_sum = 0
@@ -34,7 +74,7 @@ class research_trend:
             keyword_weight = keyword[1]['weight']
             weight_sum += keyword_weight
             keyword_ratio = weight_sum / weight_total
-            if keyword_ratio >= keyword_limit:
+            if keyword_ratio >= keyword_limit*0.01:
                 # keyword delete
                 self.G.remove_node(keyword[0])
         print("Keyword selection finished")
@@ -76,7 +116,7 @@ class research_trend:
 
         print("Community detection finished")
 
-    def research_maturity(self, min_year):
+    def research_maturity(self):
         def gaussian(x, a, b, c, d):
             """Gaussian function to be fitted"""
             return a * np.exp(-(x - b)**2 / (2 * c**2)) + d
@@ -140,32 +180,10 @@ class research_trend:
             return p
 
         print("Research maturity started")
-        # extract year weight from self.G
-        year_weight = {}
-        for node in self.G.nodes:
-            for year in self.G.nodes[node].keys():
-                try:
-                    int(year)
-                except:
-                    continue
-
-                if not year in year_weight:
-                    year_weight[str(year)] = 0
-                year_weight[str(year)] += int(self.G.nodes[node][str(year)])
-
-        # sort year_weight by year
-        year_weight = sorted(year_weight.items(), key=lambda x: x[0], reverse=False)
-
-        # remove year over now year
-        now_year = datetime.datetime.now().year
-        year_weight = [year for year in year_weight if int(year[0]) < now_year]
-        if min_year:
-            year_weight = [year for year in year_weight if int(year[0]) >= min_year]
 
         # extract x, y from year_weight
-        min_year = int(year_weight[0][0])
-        x = np.array([int(year[0]) for year in year_weight])
-        y = np.array([int(year[1]) for year in year_weight])
+        x = np.array([int(year) for year in self.year_weight.keys()])
+        y = np.array([int(year) for year in self.year_weight.values()])
 
         # Estimate the initial guess
         amplitude = np.max(y)  # Estimate the amplitude
@@ -182,12 +200,12 @@ class research_trend:
         sigma = popt[2]
 
         # predict future year until mu+3*sigma
-        x_est = np.arange(min_year, int(mu+3*sigma)+1)
+        x_est = np.arange(self.min_year, int(mu+3*sigma)+1)
         y_est = gaussian(x_est, *popt)
 
         # classificate the year 
         self.PLC_classification = {
-            "development": (min_year,int(mu-3*sigma)),
+            "development": (self.min_year,int(mu-3*sigma)),
             "introduction": (int(mu-3*sigma),int(int(mu-1.5*sigma))),
             "growth": (int(mu-1.5*sigma),int(int(mu-0.5*sigma))),
             "maturity": (int(mu-0.5*sigma),int(mu+0.5*sigma)),
@@ -290,12 +308,11 @@ class research_trend:
                 if not year in community_year_weight[community].keys():
                     community_year_weight[community][year] = 0
 
-        # remove year over now year and under growth year
-        now_year = datetime.datetime.now().year
+        # remove year over max_year and under growth year
         start_PLC_year = self.PLC_classification[start_PLC][0]
         for community in community_year_weight:
             for year in community_year_weight[community].copy():
-                if int(year) >= now_year or int(year) < start_PLC_year:
+                if int(year) >= self.max_year or int(year) < start_PLC_year:
                     del community_year_weight[community][year]
 
         # sort community by sum weight
@@ -418,7 +435,6 @@ class research_trend:
 
         print("keyword_evolution started")
         # find top keywords in each community
-        now_year = datetime.datetime.now().year
         start_PLC_year = self.PLC_classification[start_PLC]
         start_total = 0
         end_PLC_year = self.PLC_classification[end_PLC]
@@ -435,7 +451,7 @@ class research_trend:
                     except:
                         continue
 
-                    if int(year) >= now_year:
+                    if int(year) >= self.max_year:
                         continue
 
                     if int(year) in range(start_PLC_year[0], start_PLC_year[1]):

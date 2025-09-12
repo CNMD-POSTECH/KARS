@@ -20,10 +20,16 @@ class network_construction:
             # 1-2. KARS.json 읽기
             KARS_dict = json.load(open(f"{self.DB_path}/{paper_index}/KARS.json", "r", encoding="utf-8-sig"))
 
-            # 1-3. 비방향성 그래프 생성
+            # 1-3. year 가 없다면 continue
+            try:
+                year = str(KARS_dict["cover_data"]["published_date"][0])
+            except:
+                continue 
+
+            # 1-4. 비방향성 그래프 생성
             G = nx.Graph()
 
-            # 1-4. keyword_list 에 대해 co-occurrence edge 구축
+            # 1-5. keyword_list 에 대해 co-occurrence edge 구축
             keyword_list = KARS_dict["keyword_tokenization"]["title"]
             for i, keyword in enumerate(keyword_list):
                 for j, keyword2 in enumerate(keyword_list):
@@ -34,8 +40,7 @@ class network_construction:
                     else:
                         G.add_edge(keyword, keyword2, weight=1)
 
-            # 1-5. co-occurrence node 구축
-            year = str(KARS_dict["cover_data"]["published_date"][0])
+            # 1-6. co-occurrence node 구축
             for keyword in keyword_list:
                 if not keyword in G.nodes:
                     G.add_node(keyword)
@@ -50,7 +55,7 @@ class network_construction:
                 else:
                     G.nodes[keyword][year] = 1
 
-            # 1-6. save network
+            # 1-7. save network
             nx.write_gexf(G, f"{self.DB_path}/{paper_index}/KARS.gexf")
 
     def network_integrate(self):
