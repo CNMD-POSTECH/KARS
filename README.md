@@ -1,82 +1,133 @@
-<p align="center"><img src="./examples/KARS_logo.png" width="250" height="250">
+<p align="center"><img src="./imgs/KARS_logo.png" width="250" height="250" alt="KARS logo"></p>
 
 # Keyword-based Automatic Research Structurization (KARS)
-A program that automates the extraction of keywords from scientific research based on bibliographic information, structures the research, and analyzes research trends. It visually presents researchers with the spatial form and temporal flow of their research.
+A tool that automatically extracts keywords from scientific literature based on bibliographic metadata, structures the research field, and analyzes research trends. It presents spatial structures and temporal flows of research.
 
-# Installation
-## 1. Clone Github repository
-    git clone https://github.com/khyeon-cnmd/KARS.git
+## Table of Contents
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Example Dataset: ReRAM Present and Future](#example-dataset-reram-present-and-future)
+- [Results](#results)
+- [Citations](#citations)
+- [Contributors](#contributors)
 
-## 2. Setup anaconda
-    conda create -n KARS python==3.10
-    conda activate KARS
+## Features
+- Automatic keyword extraction from bibliographic data
+- Construction of modularized keyword networks (PageRank for importance, Louvain modularity for communities)
+- Temporal trend analysis across years and communities
+- Interactive HTML visualizations and Gephi export
 
-## 3. Install python libraries 
-    pip install jsonlines
-    pip install gradio==3.47.0
-    pip install networkx[default]
-    pip install tqdm
-    pip install pandas
-    pip install scipy
-    pip install bokeh
-    pip install spacy
-
-## 4. Install spacy dataset
-    python -m spacy download en_core_web_sm
-    python -m spacy download en_core_web_trf
-
-## 5. Usage
-    python KARS_GUI.py
-
-After entering the above command, connect to the localhost server (127.0.0.1) printed on the terminal, and then sequentially execute load_DB -> keyword_extraction -> network_construction -> research_trend_analysis.
-
-# A Keyword-based Approach to Analyzing Scientific Research Trends: ReRAM Present and Future 
-The ReRAM_DB.tar file contains bibliographic information and structured research data related to the ReRAM research field, as utilized in our study, "A Keyword-based Approach to Analyzing Scientific Research Trends: ReRAM Present and Future." This dataset includes example data applicable to this code.
-
-## Dataset Details
-* ReRAM_DB/KARS/metadata_source.csv: The original metadata used in the paper.  
-* ReRAM_DB/KARS/network_article.gephi: The original keyword network constructed in the study.  
-* ReRAM_DB/database: The original metadata converted into a format compatible with the provided code.  
-  
-Please note that the results of the PageRank algorithm and Modularity algorithm used in Gephi (as applied in the paper) may differ from the results obtained using the same algorithms in the provided code.
-
-## Steps to Test the Example Data
-1. Extract the contents of the ReRAM_DB.tar file.  
-2. Run KARS_GUI.py, then enter the extracted ReRAM_DB directory path in the "load_DB" section.
-3. Excute keyword_extration, network_construction, and research_trend_analysis, sequentially.
-
-
-# Results
-## 1. KARS.gexf
-The PageRank algorithm is utilized to identify significant keywords, and the Louvain's Modularity is employed to construct a modularized keyword network. The results, represented in the Gephi program, display node size indicating keyword importance and node color representing keyword communities within the network.
-
-## 2. research_maturity.html
-A graph illustrating the fluctuation in the number of keywords across years for the entire community. This graph evaluates the research maturity of the field based on the Product Life Cycle (PLC) model, reflecting the lifecycle stages of research within the respective domain.
-<p align="center"><img src="./examples/research_maturity.png">
-
-## 3. community_year_trend.html
-A graph depicting the evolution of keyword distribution over the years for each research community. This graph is instrumental in analyzing research trends within each community, as identified through research structuring.
-<p align="center"><img src="./examples/community_year_trend.png">
-
-## 4. keyword_evolution.html
-A graph illustrating the proportionate changes in top keywords over time based on the maturity level of each research community. This graph evaluates the frequency variations of top keywords over time within each community, as identified through research structuring.
-<p align="center"><img src="./examples/keyword_evolution.png">
-
-# Citations
-Kim, H., Kim, S.H., Kim, J. et al. A keyword-based approach to analyzing scientific research trends: ReRAM present and future. Sci Rep 15, 12011 (2025). https://doi.org/10.1038/s41598-025-93423-5
-
-# Contributor
+## Installation
+1. Clone the repository
+```bash
+git clone https://github.com/khyeon-cnmd/KARS.git
+cd KARS
 ```
-Conceptualization: Hyeon Kim, Donghwa Lee
-Data Curation: Hyeon Kim
-Formal Analysis: Hyeon Kim, Donghwa Lee
-Funding Acquisition: Donghwa Lee
-Investigation: Hyeon Kim, Eun Ho Kim, Jun Hyeong Gu, Donghwa Lee
-Methodology: Hyeon Kim, Seong Hun Kim, Jaeseon Kim, Donghwa Lee
-Project Administration: Hyeon Kim, Donghwa Lee
-Resources: Donghwa Lee
-Software: Donghwa Lee
-Supervision: Donghwa Lee
-Validation: Hyeon Kim, Donghwa Lee
-Visualization: Hyeon Kim, Donghwa Lee
+
+2. Create and activate a Conda environment (Python 3.10)
+```bash
+conda create -n KARS python==3.10
+conda activate KARS
 ```
+
+3. Install Python dependencies
+```bash
+pip install jsonlines gradio==3.47.0 "networkx[default]" tqdm pandas scipy bokeh spacy
+```
+
+4. Download spaCy models
+```bash
+python -m spacy download en_core_web_sm
+python -m spacy download en_core_web_trf
+```
+
+## Quick Start
+Run the GUI:
+```bash
+python KARS_GUI.py
+```
+
+### 1. load_DB
+<p align="center"><img src="./imgs/load_DB.png" alt="load_DB"></p>
+
+- Enter the path to the database directory that contains bibliographic metadata, then click Submit to load.
+
+### 2. keyword_extraction
+<p align="center"><img src="./imgs/keyword_extraction.png" alt="keyword_extraction"></p>
+
+- UPoS model:
+  - `en_core_web_sm` — Faster, lighter.
+  - `en_core_web_trf` — More accurate, slower.
+- Text source:
+  - `title` — Extract keywords from article titles.
+  - `abstract` — Extract keywords from article abstracts.
+
+### 3. network_construction
+<p align="center"><img src="./imgs/network_construction.png" alt="network_construction"></p>
+
+- Click Submit to build a keyword co-occurrence network across articles.
+
+### 4. research_trend_analysis
+<p align="center"><img src="./imgs/research_trend_analysis.png" alt="research_trend_analysis"></p>
+
+- Keyword frequency cutoff (%) — Filter out infrequent keywords.
+  - Higher → fewer, larger keywords; may miss relevant terms.
+  - Lower → more, smaller keywords; includes rarer terms.
+- Community min-frequency weight — Filter out less mature communities.
+  - Higher → fewer communities.
+  - Lower → more communities.
+- Year range — Set minimum and maximum years to analyze.
+- PLC maturity range — Select start and end stages:
+  - `Development`, `Introduction`, `Growth`, `Maturity`, `Decline`
+
+
+## Results
+1. KARS.gexf  
+   - Keyword importance (node size) via PageRank and communities (node color) via Louvain modularity, viewable in Gephi.
+
+2. research_maturity.html  
+   - Yearly keyword counts for the entire community to assess research maturity based on the Product Life Cycle (PLC) model.  
+   <p align="center"><img src="./imgs/research_maturity.png" alt="Research maturity"></p>
+
+3. community_year_trend.html  
+   - Evolution of keyword distributions by community over years, useful for trend analysis.  
+   <p align="center"><img src="./imgs/community_year_trend.png" alt="Community year trend"></p>
+
+4. keyword_evolution.html  
+   - Proportional changes of top keywords over time by community maturity level.  
+   <p align="center"><img src="./imgs/keyword_evolution.png" alt="Keyword evolution"></p>
+
+## Example Dataset: ReRAM Present and Future
+The provided ReRAM_DB.tar contains bibliographic metadata and structured research data used in the study “A keyword-based approach to analyzing scientific research trends: ReRAM present and future.”
+
+Dataset contents:
+- ReRAM_DB/KARS/metadata_source.csv — Original metadata
+- ReRAM_DB/KARS/network_article.gephi — Original keyword network
+- ReRAM_DB/database — Metadata converted for this code
+
+Note: PageRank and modularity results may differ from those computed in Gephi.
+
+How to test with the example data:
+```bash
+tar -xf ReRAM_DB.tar
+python KARS_GUI.py
+# In the GUI, set the extracted ReRAM_DB directory in "load_DB",
+# then run: keyword_extraction → network_construction → research_trend_analysis
+```
+
+## Citations
+Kim, H., Kim, S.H., Kim, J. et al. A keyword-based approach to analyzing scientific research trends: ReRAM present and future. Sci Rep 15, 12011 (2025). https://doi.org/10.1038/s41598-025-93423-5
+
+## Contributors
+- Conceptualization: Hyeon Kim, Donghwa Lee  
+- Data Curation: Hyeon Kim  
+- Formal Analysis: Hyeon Kim, Donghwa Lee  
+- Funding Acquisition: Donghwa Lee  
+- Investigation: Hyeon Kim, Eun Ho Kim, Jun Hyeong Gu, Donghwa Lee  
+- Methodology: Hyeon Kim, Seong Hun Kim, Jaeseon Kim, Donghwa Lee  
+- Project Administration: Hyeon Kim, Donghwa Lee  
+- Resources: Donghwa Lee  
+- Software: Donghwa Lee  
+- Supervision: Donghwa Lee  
+- Validation: Hyeon Kim, Donghwa Lee
