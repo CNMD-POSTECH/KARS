@@ -97,8 +97,9 @@ DB_name
   - `Development(개발)`, `Introduction(도입)`, `Growth(성장)`, `Maturity(성숙)`, `Decline(쇠퇴)`
 
 ## 결과물
-1. KARS.gexf  
+1. KARS.gexf, KARS_community.gexf
    - PageRank 기반 키워드 중요도(노드 크기)와 Louvain 모듈러리티 기반 커뮤니티(노드 색상). Gephi에서 열람 가능.
+   <p align="center"><img src="./imgs/Keyword_network.png" alt="Research maturity"></p>
 
 2. research_maturity.html  
    - 제품수명주기(PLC) 모델에 따라 전체 커뮤니티의 연도별 키워드 수로 연구 성숙도를 평가합니다.  

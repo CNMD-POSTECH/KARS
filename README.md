@@ -99,8 +99,9 @@ DB_name
 
 
 ## Results
-1. KARS.gexf  
+1. KARS.gexf, KARS_community.gexf
    - Keyword importance (node size) via PageRank and communities (node color) via Louvain modularity, viewable in Gephi.
+   <p align="center"><img src="./imgs/Keyword_network.png" alt="Research maturity"></p>
 
 2. research_maturity.html  
    - Yearly keyword counts for the entire community to assess research maturity based on the Product Life Cycle (PLC) model.  
