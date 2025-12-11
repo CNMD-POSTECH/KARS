@@ -48,12 +48,28 @@ Run the GUI:
 python KARS_GUI.py
 ```
 
-### 1. load_DB
+### 1. DB construction
+<p align="center"><img src="./imgs/DB_construction.png" alt="DB_construction"></p>
+
+- Retrieve the bibliographic metadata using your preferred engines (e.g., Web of Science, Crossref)
+- Make folder structure as below (refer to the image)
+```
+DB_name
+└── 1
+    └── KBSE.json
+└── 2
+    └── KBSE.json
+└── ...
+```
+- Convert each metadata into the json format as in `KBSE.json` (see `example_metadata.json` for reference)
+- Please refer to the example DB structure of 'ReRAM_DB.tar'
+
+### 2. load_DB
 <p align="center"><img src="./imgs/load_DB.png" alt="load_DB"></p>
 
 - Enter the path to the database directory that contains bibliographic metadata, then click Submit to load.
 
-### 2. keyword_extraction
+### 3. keyword_extraction
 <p align="center"><img src="./imgs/keyword_extraction.png" alt="keyword_extraction"></p>
 
 - UPoS model:
@@ -63,12 +79,12 @@ python KARS_GUI.py
   - `title` — Extract keywords from article titles.
   - `abstract` — Extract keywords from article abstracts.
 
-### 3. network_construction
+### 4. network_construction
 <p align="center"><img src="./imgs/network_construction.png" alt="network_construction"></p>
 
 - Click Submit to build a keyword co-occurrence network across articles.
 
-### 4. research_trend_analysis
+### 5. research_trend_analysis
 <p align="center"><img src="./imgs/research_trend_analysis.png" alt="research_trend_analysis"></p>
 
 - Keyword frequency cutoff (%) — Filter out infrequent keywords.

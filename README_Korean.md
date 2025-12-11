@@ -47,13 +47,28 @@ GUI 실행:
 ```bash
 python KARS_GUI.py
 ```
+### 1. DB 구성
+<p align="center"><img src="./imgs/DB_construction.png" alt="DB_construction"></p>
 
-### 1. load_DB
+- 선호하는 검색 엔진(예: Web of Science, Crossref)으로 서지 메타데이터를 수집합니다.
+- 아래와 같은 폴더 구조를 만듭니다(이미지 참고).
+```
+DB_name
+└── 1
+    └── KBSE.json
+└── 2
+    └── KBSE.json
+└── ...
+```
+- 각 메타데이터를 `KBSE.json`과 동일한 JSON 형식으로 변환합니다(`example_metadata.json` 참고).
+- 'ReRAM_DB.tar'에 포함된 예시 DB 구조를 참고하세요.
+
+### 2. load_DB
 <p align="center"><img src="./imgs/load_DB.png" alt="load_DB"></p>
 
 - 서지 메타데이터가 들어 있는 데이터베이스 디렉터리 경로를 입력하고 Submit을 클릭하세요.
 
-### 2. keyword_extraction
+### 3. keyword_extraction
 <p align="center"><img src="./imgs/keyword_extraction.png" alt="keyword_extraction"></p>
 
 - UPoS 모델:
@@ -63,12 +78,12 @@ python KARS_GUI.py
   - `title` — 논문 제목에서 키워드 추출
   - `abstract` — 논문 초록에서 키워드 추출
 
-### 3. network_construction
+### 4. network_construction
 <p align="center"><img src="./imgs/network_construction.png" alt="network_construction"></p>
 
 - Submit을 클릭하면 논문 간 키워드 동시출현 네트워크를 구축합니다.
 
-### 4. research_trend_analysis
+### 5. research_trend_analysis
 <p align="center"><img src="./imgs/research_trend_analysis.png" alt="research_trend_analysis"></p>
 
 - 키워드 빈도 컷오프(%) — 드문 키워드를 필터링합니다.
@@ -129,4 +144,4 @@ Kim, H., Kim, S.H., Kim, J. et al. A keyword-based approach to analyzing scienti
 - 자원(Resources): Donghwa Lee  
 - 소프트웨어(Software): Donghwa Lee  
 - 지도(Supervision): Donghwa Lee  
-- 검증(Validation): Hyeon
+- 검증(Validation): Hyeon Kim
